@@ -48,7 +48,7 @@
     function doGet(){
 
         fetch(
-            '127.0.0.1:8000/api/register/john/wilry/undefined',
+            utils.url+'register/john/wilry/undefined',
             {
                 method:'GET',
             }

@@ -1,4 +1,8 @@
+
+const remoteurl = "https://www.tarcarot.com/api/"
 let url = "http://127.0.0.1:8000/api/"
+url = remoteurl
+
 import {browser} from "$app/environment"
 
 let dburl = "https://fdyzrdylphrevhqfghxd.supabase.co/rest/v1/"
