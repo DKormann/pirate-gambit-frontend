@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<link rel="icon" href="%sveltekit.assets%/favicon.png" />
+		<meta name="viewport" content="width=device-width" />
+		%sveltekit.head%
+	</head>
+	<body>
+		<div>%sveltekit.body%</div>
+	</body>
+</html>
+
+<style>
+
+    body{
+
+
+        --active: #ccf;
+        --beta : #113;
+        --juice : #f21;
+        background-color: #113;
+
+        font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji";
+        font-size: 10px;
+        text-align: center;
+
+    }
+
+	input{
+        background-color: var(--active);
+        border-radius: .1em;
+        border-style: none;
+        font-size: 1em;
+        font-family: inherit;
+    }
+
+    button{
+        background-color: var(--active);
+        color:var(--beta);
+        font-size: 1em;
+        border-style: none;
+        border-radius: .2em;
+    }
+    .leaderboard{
+
+        font-weight: bold;
+        margin-top: 5vh;
+        background-color: rgb(0, 140, 255);
+        color: white;
+        padding:.5em;
+        border-radius: .3em;
+        box-shadow: 0 7px 0 rgb(6, 60, 161);
+    }
+
+
+</style>
