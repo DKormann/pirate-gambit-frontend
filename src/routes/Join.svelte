@@ -31,8 +31,6 @@
             utils.set_local('pass_hash', user.passhash)
             utils.set_local('email', user.email)
 
-            
-
 
             fetch (utils.url + `register/${user.name}/${user.email}/${user.passhash}`,{method:'get'}).then((res)=>{
                 console.log(res)

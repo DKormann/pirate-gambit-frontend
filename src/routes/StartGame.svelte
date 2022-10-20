@@ -116,6 +116,8 @@
     
     {#if status == 0}
 
+    <img src='../assets/pieces.png' alt="">
+
     <button id = "joingame" on:click = {joingame} >Join game</button>
 
     <p></p>
@@ -198,7 +200,7 @@
         color: white;
         padding:.5em;
         border-radius: .3em;
-        box-shadow: 0 7px 0 rgb(0, 87, 158);
+        box-shadow: 0 7px 0 rgb(0, 115, 209);
     }
 
 
