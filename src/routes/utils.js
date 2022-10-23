@@ -1,7 +1,7 @@
 
 const remoteurl = "https://www.tarcarot.com/api/"
 const devurl = "http://127.0.0.1:8000/api/"
-let url = devurl
+let url = remoteurl
 
 import {browser} from "$app/environment"
 
