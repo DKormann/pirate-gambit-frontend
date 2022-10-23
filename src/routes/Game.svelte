@@ -67,12 +67,21 @@ function get_piece_info(d){
 
 function clicked(x,y){
 
+
+
+
     let target_info = state.data[x+y*9]
 
 
-    if (target_info[1] == 1 ){
+
+    if (target_info && target_info.status && 
+    target_info.status.Taken && 
+    target_info.status.Taken[1] == 'King'&& 
+    target_info.status.Taken[0] == my_number ){
         spawning = true
     }else{
+
+        console.log(target_info)
         spawning = false
     }
 
@@ -120,53 +129,78 @@ function coord_to_num(x,y){
 
 function tileclass(d,o){
 
-
-    if  (d[0] == -1){
+    if (d == null){
         return "water tile"
     }
 
-    if (d[1] != 0){
-        return `c${d[0]} tile`
+
+
+    if (d.status.Taken){
+        return 'tile c' + d.status.Taken[0]
     }
 
-    return ["light","dark"][o%2] + " tile"
+    let safety =''
+    if (d.ground=='Safe'){
+        safety = ' safe'
+    }
+    if (d.ground== "Treasure"){
+        safety = ' treasure'
+    }
+
+    return ["light","dark"][o%2] +safety+ " tile"
 
 }
 
 function piececlass(d){
 
 
-    if (d[1] == -2){
-        return "piece treasure"
-    }
-
-    if (d[1] <= 0){
+    if (d == null){
         return ""
     }
 
-
-    if (d[1] == 1 && spawn_target > 1 && d[0] == my_number){
-        return `piece t${spawn_target}`
+    if (d.status == 'Empty'){
+        return ""
     }
 
+    if (d.status.Taken){
 
-    return `piece t${d[1]}` + (d[0] == my_number ? "" : ' enemy')
+        let content = d.status.Taken;
+
+        let num = content[0]
+        let piece = content[1]
+        let is_mine = num == my_number
+
+        if( piece == "King" && is_mine && spawn_target >1){
+            return "piece t"+spawn_target
+        }
+
+        return "piece " + piece + (is_mine? "" : ' enemy')
+
+    }
+
+    return 'piece error'
+
+   
 }
 
 function prep_spawn(x){
     spawn_target = x +2
 }
 
-function get_piece_tag(x){
+function get_piece_tag(d){
 
-    if (x[1]==1){
+    
 
-        let name = opponents.reduce((a,b)=>a[1] == x[0]?a:b)[0]
+    if (d && d.status && d.status.Taken &&d.status.Taken[1] == "King"){
+
+        let num = d.status.Taken[0]
+        let name = opponents.reduce((a,b) => a[1] == num? a:b)[0]
+        
         name = name.split(' ')[0]
         return name.slice(0,8)
+}
+    return ''
 
-    }
-    return  ""
 }
 
 </script>
@@ -175,14 +209,14 @@ function get_piece_tag(x){
 
     {#if state.got_treasure}
         <h2>you got the treasure</h2>
-        <h2>get to the left border!</h2>
+        <h2>go to the green zone to win!</h2>
         <p></p>
 
     {:else if state.treasure_holder == -1}
-        <h2>find the treasure at the center!</h2>
+        <h2>get the treasure at the center!</h2>
     {:else}
 
-        <h2>{opponents.reduce((a,b)=>a[1] == state.treasure_holder?a:b)[0]} found the treasure!</h2>
+        <h2>{opponents.reduce((a,b)=>a[1] == state.treasure_holder?a:b)[0]} found the treasure! get his King to win</h2>
         <!-- {state.treasure_holder} -->
         <p></p>
     {/if}
@@ -190,6 +224,7 @@ function get_piece_tag(x){
     {#each {length:9} as _ , x}
         <div class = row>
             {#each {length:9} as _,y}
+
                 <div 
                 class={ (x==active[0]&&y==active[1]?'active ':'') + tileclass(state.data[x+y*9], state.offset[0]+state.offset[1]+x+y )}  
                 id={"t"+x +y}
@@ -212,6 +247,7 @@ function get_piece_tag(x){
     <p></p>
 
     {#if spawning}
+
         <div class = row>
 
             {#each {length: 5} as _,f }
@@ -228,7 +264,7 @@ function get_piece_tag(x){
 
         </div>
     {:else}
-        <div class = "tile"></div>
+        <div class = "tile">no </div>
     {/if}
     
     <div class = energybar style = {`width:${state.energy*2.7}em`}>
@@ -250,11 +286,7 @@ function get_piece_tag(x){
         background-size: 20em;
     }
 
-    .treasure{
-        /* background-color: gold; */
-        background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' version='1.1' height='50px' width='120px'><text x='0' y='15' fill='red' font-size='20'>X</text></svg>");
-
-    }
+    
 
     .energybar{
 
@@ -274,22 +306,23 @@ function get_piece_tag(x){
     
 
     /* queen */
-    .t2{
+    .t2,.Queen{
         background-position-x: 16.5em;
     }
     /* bishop */
-    .t3{
+    .t3,.Bishop{
         background-position-x: 13em;
     }
-    .t4{
+    /*knight*/
+    .t4,.Knight{
         background-position-x: 9.5em;
     }
     /* rook */
-    .t5{
+    .t5,.Rook{
         background-position-x: 6em;
     }
     /* pawn */
-    .t6{
+    .t6,.Pawn{
         background-position-x: 2.9em;
     }
 
@@ -316,11 +349,28 @@ function get_piece_tag(x){
     .water{
         background-color: #226;
     }
+
+
+
     .dark{
         background-color: #433;
     }
     .light{
         background-color: #667;
+    }
+
+    .dark.safe{
+        background-color: rgb(0, 81, 0);
+    }
+    .light.safe{
+        background-color: green;
+    }
+
+    .treasure{
+        /* background-color: gold; */
+        /* background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' version='1.1' height='100px' width='120px'><text x='0' y='15' fill='red' font-size='40'>X</text></svg>"); */
+        background-image: url('../assets/treasure.svg');
+
     }
 
     .c0{

@@ -19,6 +19,9 @@
     let view = null
     let end = null
     let winner = null
+    let leave = null
+    let running_queue = false
+    let queue = []
 
     function joingame(){
         fetch (utils.url + `join_game/${user.name}/${user.passhash}`).then(res=>{
@@ -64,10 +67,8 @@
                 if (data.Join) {
                     console.log("got join message")
                 }else if (data.Lobby){
-                    console.log("got lobby message");
-
+                    console.log("got lobby message"); 
                     opponents = data.Lobby.players
-
                 }else if (data.State){
                     console.log("got state message");
                     view = data.State
@@ -79,6 +80,11 @@
                     console.log(end);
                     winner = opponents.reduce((a,b)=>a[1] == end.winning_number?a:b)
                     return
+                }else if (data == "Leave"){
+                    console.log("got leave message")
+                    alert("you disconnected from the game")
+                    status = 0
+                    return 
                 }
 
                 getUpdate()
@@ -99,11 +105,57 @@
     function make_move(start,end,upgrade,callback){
 
         console.log("sending move")
+
         fetch(utils.url + `make_move/${game_id}/${token}/${start}/${end}/${upgrade}`, {method: "post"} ).then(answer=>{
             answer.text().then(text=>{
                 console.log(text)
                 let res = JSON.parse(text)
                 callback(res)
+            })
+        })
+    }
+
+
+    //leave the lobby before the game actually started
+    function leavelobby(){
+        console.log("leaving lobby")
+        fetch (utils.url+ `leave_lobby/${game_id}/${token}`).then(res=>{
+            console.log(res);
+            res.text().then(text=>{
+                console.log(text)
+            })
+        })
+        status = 0
+    }
+
+    //leave ongoing game
+    function leavegame(){
+        console.log("game leave request")
+        fetch (utils.url+`leave_game/${game_id}/${token}`).then(response=>{
+            console.log(response)
+
+
+            response.text().then(t=>{
+                
+                console.log(t)
+
+                let data = JSON.parse(t)
+
+                if (data.End){
+                    status = 3;
+                    console.log("got game over message")
+                    end = data.End
+                    console.log(end);
+                    winner = opponents.reduce((a,b)=>a[1] == end.winning_number?a:b)
+                    status = 3
+                    return
+                }else{
+                    leave = data
+
+                    status = 4
+                }
+
+                
             })
         })
     }
@@ -116,16 +168,19 @@
     
     {#if status == 0}
 
-    <img src='../assets/pieces.png' alt="">
+        <div class = logo></div> 
 
-    <button id = "joingame" on:click = {joingame} >Join game</button>
+        <h2 class =gold >Welcome to Tarcarot</h2>
 
-    <p></p>
-    <a href="/leaderboard"> 
-        <button class = leaderboard>
-            leaderboard
-        </button>
-    </a>
+
+        <button class = "joingame" on:click = {joingame} >Join game</button>
+
+        <p></p>
+        <a href="/leaderboard"> 
+            <button class = leaderboard>
+                leaderboard
+            </button>
+        </a>
 
 
     {:else if status == 1}
@@ -137,14 +192,20 @@
             <p>{name}</p>
 
         {/each}
+
+
+        <button class = leaderboard on:click={leavelobby}>leave</button>
         
         {#if opponents.length > 1}
 
-            <button id = "startgame" on:click = {startGame}> Start </button>
+            <button class = "startgame" on:click = {startGame}> Start </button>
 
         {/if}
 
+
     {:else if status == 2}
+
+        <button class = surrender on:click={leavegame}> leave game </button>
     
         <Game state = {view} my_number = {my_number} make_move ={make_move} opponents = {opponents}/>
 
@@ -165,6 +226,19 @@
                 leaderboard
             </button>
         </a>
+    
+    {:else if status == 4}
+
+        <h3>you left</h3>
+        <h3>score: <span class = gold> {leave.Leave.value} </span></h3>
+
+        <button id = "joingame" on:click={joingame}> Play again </button>
+
+        <a href="/leaderboard">
+            <button class=leaderboard>
+                leaderboard
+            </button>
+        </a>
         
     {/if}
     
@@ -173,7 +247,7 @@
 
 <style>
 
-    #joingame{
+    .joingame{
         font-weight: bold;
         margin-top: 10vh;
         background-color: #fa2;
@@ -183,14 +257,36 @@
         box-shadow: 0 7px 0 #a61;
     }
 
-    #startgame{
+    .startgame{
         font-weight: bold;
         margin-top: 5vh;
         background-color: #f62;
         color: white;
         padding:.5em;
         border-radius: .3em;
-        box-shadow: 0 7px 0 #a21;
+        box-shadow: 0 7px 0 rgb(196, 78, 28);
+    }
+
+    .surrender{
+        font-style: italic;
+        position: absolute;
+        top:1em;
+        left:1em;   
+        text-decoration: underline;
+        color:rgb(207, 0, 0);
+        background: none;
+    }
+
+    .gold{
+        color:#ffe139;
+        text-shadow: 0 0 2px rgba(255, 217, 0, 0.849);
+    }
+    .logo{
+        width:20vh;
+        height:20vh;
+        background-image: url("../assets/icon.svg");
+        display: inline-block;
+
     }
     .leaderboard{
 
@@ -200,7 +296,7 @@
         color: white;
         padding:.5em;
         border-radius: .3em;
-        box-shadow: 0 7px 0 rgb(0, 115, 209);
+        box-shadow: 0 7px 0 rgb(4, 96, 171);
     }
 
 
