@@ -217,7 +217,7 @@
 
         <p></p>
 
-        <button id = "joingame" on:click={joingame}>Play again</button>
+        <button class = "joingame" on:click={joingame}>Play again</button>
 
 
         <p></p>
