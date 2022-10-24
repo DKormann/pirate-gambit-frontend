@@ -12,12 +12,12 @@
     "src": "src/assets/pieces.png"
   },
   "node_modules/@sveltejs/kit/src/runtime/client/start.js": {
-    "file": "_app/immutable/start-db0ea29c.js",
+    "file": "_app/immutable/start-0cb8b1f0.js",
     "src": "node_modules/@sveltejs/kit/src/runtime/client/start.js",
     "isEntry": true,
     "imports": [
       "_index-549be724.js",
-      "_singletons-c495184f.js"
+      "_singletons-cb3e1516.js"
     ],
     "dynamicImports": [
       ".svelte-kit/generated/nodes/0.js",
@@ -36,16 +36,16 @@
     ]
   },
   "node_modules/@sveltejs/kit/src/runtime/components/error.svelte": {
-    "file": "_app/immutable/components/error.svelte-d8a077eb.js",
+    "file": "_app/immutable/components/error.svelte-78587d4d.js",
     "src": "node_modules/@sveltejs/kit/src/runtime/components/error.svelte",
     "isEntry": true,
     "imports": [
       "_index-549be724.js",
-      "_singletons-c495184f.js"
+      "_singletons-cb3e1516.js"
     ]
   },
   "src/routes/+page.svelte": {
-    "file": "_app/immutable/components/pages/_page.svelte-f8b1698b.js",
+    "file": "_app/immutable/components/pages/_page.svelte-143164a4.js",
     "src": "src/routes/+page.svelte",
     "isEntry": true,
     "imports": [
@@ -89,8 +89,8 @@
       "__layout-8d2a742b.js"
     ]
   },
-  "_singletons-c495184f.js": {
-    "file": "_app/immutable/chunks/singletons-c495184f.js",
+  "_singletons-cb3e1516.js": {
+    "file": "_app/immutable/chunks/singletons-cb3e1516.js",
     "imports": [
       "_index-549be724.js"
     ]
@@ -114,7 +114,7 @@
     ]
   },
   ".svelte-kit/generated/nodes/1.js": {
-    "file": "_app/immutable/chunks/1-5cb06245.js",
+    "file": "_app/immutable/chunks/1-28b406b5.js",
     "src": ".svelte-kit/generated/nodes/1.js",
     "isDynamicEntry": true,
     "imports": [
@@ -122,7 +122,7 @@
     ]
   },
   ".svelte-kit/generated/nodes/2.js": {
-    "file": "_app/immutable/chunks/2-da6d5591.js",
+    "file": "_app/immutable/chunks/2-c3d00cf2.js",
     "src": ".svelte-kit/generated/nodes/2.js",
     "isDynamicEntry": true,
     "imports": [
