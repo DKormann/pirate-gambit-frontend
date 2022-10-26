@@ -30,6 +30,8 @@
     const costs = [9,3,3,5,1]
 
     let active = [-5,-5]
+    let targets = []
+
     let spawning = false
     let spawn_target = 1
 
@@ -67,6 +69,8 @@ function get_piece_info(d){
 
 function clicked(x,y){
 
+    console.log("clcik");
+
 
 
 
@@ -86,26 +90,32 @@ function clicked(x,y){
     }
 
 
-    if ( true ) {
 
-        let oldnum = coord_to_num(active[0],active[1])
 
-        let newnum = coord_to_num(x,y)
+    let oldnum = coord_to_num(active[0],active[1])
 
-        if (newnum == oldnum){
-            return 
-        }
+    let newnum = coord_to_num(x,y)
 
-        make_move(oldnum,newnum,spawn_target,(res)=>{
-
-            if (res){
-                spawn_target = 0
-            }
-        })
+    if (newnum == oldnum){
+        return 
     }
 
+    make_move(oldnum,newnum,spawn_target,(res)=>{
+
+        if (res){
+            spawn_target = 0
+        }
+    })
+
+
     set_active(x,y)
+    set_targets(x,y)
+
+
 }
+
+
+
 
 function set_active(x,y){
 
@@ -120,7 +130,132 @@ function set_active(x,y){
 
     let tile = document.querySelector("#t"+x+y)
     tile.classList.add("active")
+}
 
+
+function set_targets(x,y){
+
+
+    targets.forEach(target=>{
+        document.querySelector(target).classList.remove("target")
+    })
+
+    let start = document.querySelector("#t"+x+y).children[0].classList
+
+    targets = []
+
+    if (start.contains("piece")){
+        console.log(spawn_target);
+        if (spawn_target == 2){
+            start = "Queen"
+        }else if (spawn_target == 3){
+            start = "Bishop"
+        }else if (spawn_target == 4 ){
+            start = "Knight"
+        }else if(spawn_target == 5){
+            start = "Rook"
+        }else if (spawn_target == 6){
+            start = "Pawn"
+        }else{
+            start = start[1]
+        }
+    }else{
+        console.log(start);
+    }
+
+
+    if (start == "Pawn"){
+        targets = [
+            "#t"+x+(y+1),"#t"+x+(y-1),"#t"+(x+1)+y,"#t"+(x-1)+y,
+        ]
+    }else if (start == "Knight"){
+
+        add_target(x+1,y-2)
+        add_target(x-1,y-2)
+        add_target(x+1,y+2)
+        add_target(x-1,y+2)
+        add_target(x+2,y+1)
+        add_target(x-2,y+1)
+        add_target(x-2,y-1)
+        add_target(x+2,y-1)
+
+    }
+    else if (start == "Bishop"){
+
+        let dirs = [[1,1],[1,-1],[-1,1],[-1,-1]]
+        add_target_directions(x,y,dirs)
+
+    }
+    else if (start == "Rook"){
+
+        let dirs = [[1,0],[0,-1],[-1,0],[0,1]]
+        add_target_directions(x,y,dirs)
+
+    }
+    else if (start == "Queen"){
+
+        let dirs = [[1,0],[0,-1],[-1,0],[0,1],[1,1],[1,-1],[-1,1],[-1,-1]]
+        add_target_directions(x,y,dirs)
+
+    }
+
+    else if (start == "King"){
+
+        add_target(x+1,y+1)
+        add_target(x-1,y+1)
+        add_target(x-1,y-1)
+        add_target(x+1,y-1)
+        add_target(x+1,y+0)
+        add_target(x-0,y+1)
+        add_target(x-1,y-0)
+        add_target(x+0,y-1)
+
+    }
+
+    // targets = ["#t"+x+(y+1)]
+
+
+    targets.forEach(target=>{
+
+        document.querySelector(target).classList.add("target")
+    })
+}
+
+function add_target_directions(x,y,dirs){
+    dirs.forEach(dir=>{
+        let pos = [x,y]
+        while ( true ){
+            pos = [pos[0]+dir[0], pos[1] + dir[1]]
+            if (!add_target(pos[0],pos[1])){
+                break
+            }
+        }
+    })
+}
+
+function add_target(x,y){
+
+    if (x < 0 || x > 8 || y < 0 || y > 8){
+        return false
+    }
+
+
+    let new_target = ("#t" + x + y)
+
+    let child = document.querySelector(new_target).children[0].classList
+
+    if (child.contains("piece")){
+        if (child.contains("enemy")){
+
+            targets.push(new_target)
+        }
+        return false
+    }
+
+    targets.push(new_target)
+
+
+    return true
 }
 
 function coord_to_num(x,y){
@@ -185,6 +320,7 @@ function piececlass(d){
 
 function prep_spawn(x){
     spawn_target = x +2
+    set_targets(active[0],active[1])
 }
 
 function get_piece_tag(d){
@@ -346,9 +482,7 @@ function get_piece_tag(d){
         height:3em;
         display: inline-flex;
     }
-    .water{
-        background-color: #226;
-    }
+    
 
 
 
@@ -419,6 +553,18 @@ function get_piece_tag(d){
     .active{
         background-color: gold;
         box-shadow: 0 0 15px gold;
+    }
+
+    .light.target{
+        background-color: rgb(0, 255, 255);
+    }
+
+    .dark.target{
+        background-color: rgb(15, 187, 255);
+    }
+
+    .water{
+        background-color: #226;
     }
 
     .pinfo{
